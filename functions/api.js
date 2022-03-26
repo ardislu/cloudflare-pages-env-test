@@ -19,12 +19,14 @@ async function sign(message, privateKey) {
       name: 'RSASSA-PKCS1-V1_5',
       hash: 'SHA-256'
     },
-    false,
+    true,
     ['sign']
   );
 
-  const signatureBuffer = await crypto.subtle.sign('RSASSA-PKCS1-V1_5', signingKey, message);
-  return base64UrlEncode(String.fromCharCode(...new Uint8Array(signatureBuffer)));
+  return base64UrlEncode(String.fromCharCode(...new Uint8Array(await crypto.subtle.exportKey('pkcs8', signingKey))));
+
+  // const signatureBuffer = await crypto.subtle.sign('RSASSA-PKCS1-V1_5', signingKey, message);
+  // return base64UrlEncode(String.fromCharCode(...new Uint8Array(signatureBuffer)));
 }
 
 export async function onRequestGet() {
