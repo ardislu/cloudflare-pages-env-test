@@ -10,17 +10,12 @@
 </head>
 
 <body>
+  <main></main>
+
   <script>
     (async () => {
-      const jwt = await fetch('/api').then(r => r.text());
-
-      fetch('https://oauth2.googleapis.com/token', {
-        method: 'POST',
-        body: JSON.stringify({
-          assertion: jwt,
-          grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer'
-        })
-      });
+      const signature = await fetch('/api').then(r => r.text());
+      document.querySelector('main').insertAdjacentText('beforeend', signature);
     })();
   </script>
 </body>

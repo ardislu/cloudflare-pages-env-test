@@ -27,58 +27,8 @@ async function sign(message, privateKey) {
   return base64UrlEncode(String.fromCharCode(...new Uint8Array(signatureBuffer)));
 }
 
-async function getJwt(clientEmail, privateKey, scopes) {
-  const header = base64UrlEncode(JSON.stringify({
-    alg: 'RS256',
-    typ: 'JWT'
-  }));
-
-  const now = Math.round(Date.now() / 1000);
-  const expires = now + 3600;
-  const payload = base64UrlEncode(JSON.stringify({
-    iss: clientEmail,
-    aud: 'https://oauth2.googleapis.com/token',
-    exp: expires,
-    iat: now,
-    scope: scopes
-  }));
-
-  const unsignedJwt = `${header}.${payload}`;
-  // const signature = await sign(unsignedJwt, privateKey);
-  const signature = 'TEST_SIGN';
-  const jwt = `${unsignedJwt}.${signature}`;
-
-  return jwt;
-
-  // const response = await fetch('https://oauth2.googleapis.com/token', {
-  //   method: 'POST',
-  //   body: JSON.stringify({
-  //     assertion: jwt,
-  //     grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer'
-  //   })
-  // });
-  // const oauth = await response.json();
-
-  // return oauth.access_token;
-}
-
-export async function onRequestGet({ request, env }) {
-  const url = new URL(request.url);
-  const queryString = decodeURIComponent(url.search.substring(1));
-
-  const email = env.EMAIL // E.g. "example@example.com"
-  const privateKey = env.PRIVATE_KEY // E.g. "-----BEGIN PRIVATE KEY-----\n...EXAMPLE...\n-----END PRIVATE KEY-----\n"
-  const scopes = env.SCOPES // E.g. "https://example.com/auth/scope1 https://example.com/auth/scope2"
-
-  const jwt = await getJwt(email, privateKey, scopes);
-
-  return new Response(jwt);
-
-  // const response = await fetch(queryString, {
-  //   headers: {
-  //     Authorization: `Bearer ${jwt}`
-  //   }
-  // });
-
-  // return response;
+export async function onRequestGet() {
+  const privateKey = 'MIIBVgIBADANBgkqhkiG9w0BAQEFAASCAUAwggE8AgEAAkEAq7BFUpkGp3+LQmlQYx2eqzDV+xeG8kx/sQFV18S5JhzGeIJNA72wSeukEPojtqUyX2J0CciPBh7eqclQ2zpAswIDAQABAkAgisq4+zRdrzkwH1ITV1vpytnkO/NiHcnePQiOW0VUybPyHoGM/jf75C5xET7ZQpBe5kx5VHsPZj0CBb3b+wSRAiEA2mPWCBytosIU/ODRfq6EiV04lt6waE7I2uSPqIC20LcCIQDJQYIHQII+3YaPqyhGgqMexuuuGx+lDKD6/Fu/JwPb5QIhAKthiYcYKlL9h8bjDsQhZDUACPasjzdsDEdq8inDyLOFAiEAmCr/tZwA3qeAZoBzI10DGPIuoKXBd3nk/eBxPkaxlEECIQCNymjsoI7GldtujVnr1qT+3yedLfHKsrDVjIT3LsvTqw==';
+  const signature = await sign('TEST MESSAGE', privateKey);
+  return new Response(signature);
 }
