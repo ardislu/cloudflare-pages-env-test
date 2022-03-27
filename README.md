@@ -1,5 +1,13 @@
 # cloudflare-pages-env-test
 
+When run locally, the `crypto.subtle.sign` function works as expected. After running:
 ```
 npx wrangler pages dev .
 ```
+
+Visiting http://localhost:8788/ returns:
+```
+G3LiJGjMWZJ2gh9xMMUt-mrXDEXdc5w_eGpaqM4cTLQ0k3OF73rWJqkc99yuzlKwzluXNjxG7O5jxBxEqS7vqw
+```
+
+However when the same code is deployed to Cloudflare Pages, it no longer works: https://cloudflare-pages-env-test.pages.dev/
